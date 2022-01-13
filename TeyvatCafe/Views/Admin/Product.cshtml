@@ -1,0 +1,485 @@
+﻿@model List<Product>;
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Sản phẩm"; 
+}
+
+<div>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">SẢN PHẨM</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+                <li class="breadcrumb-item active">SẢN PHẢM</li>
+            </ol>
+
+            <div class="card-body">
+                <table class="table table-bordered" style="vertical-align:baseline">
+                    <thead class="bg-dark" style="color:white">
+                        <tr style="text-align:center">
+
+                            <td>Tên Sản Phẩm</td>
+                            <td>Giá</td>
+                            <td>Số Lượng</td>
+                            <td>Hình Ảnh</td>
+                            <td>Sửa Thông Tin Sản Phẩm</td>
+                            <td>Xóa Thông Tin Sản Phẩm</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr style="text-align:center">
+
+                                <td>
+                                    <p><h5 style="color:black;max-width:400px">@item.Name</h5></p>
+                                </td>
+                                <td>
+                                    <p><h5 style="color:black">@item.Price.ToString("#,##0") VND</h5></p>
+                                </td>
+                                <td>
+                                    <p><h5 style="color:black">@item.Stock</h5></p>
+                                </td>
+                                <td>
+                                    <p><h5 style="color:black"> <img src="/img/productImg/@item.ImageUrl" width="150" height="150" alt="@item.Name" />  </h5></p>
+                                </td>
+
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top:0px !important">
+                                        <button class="btn btn-primary btn-edit" type="button" pID="@item.IdProduct">SỬA</button>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top:0px !important">
+                                        <button class="btn btn-primary" type="button" pdID="@item.IdProduct" name="delete">XÓA</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                        <button class="btn btn-primary btn-add" href="#">Thêm Sản Phẩm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="d-flex justify-content-end" style="margin-right: 145px">
+        <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/product" ma-item="2">
+        </pagination-helper>
+    </div>
+</div>
+
+
+@*MODAL*@
+<div class="modal" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="close">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Sửa Đổi Thông Tin Sản Phẩm
+        </header>
+        <form id="editform">
+            <div class="modal-body">
+                <div class="modal-product-name">
+                    <label for="text-tickets" class="modal-label">
+                        Tên Sản Phẩm
+                    </label>
+                    <input type="text" class="modal-input" placeholder="Name" name="productName">
+                    <input type="hidden" name="proID" />
+                </div>
+                <div class="modal-product-price">
+                    <label for="text-tickets" class="modal-label">
+                        Giá Cả
+                    </label>
+                    <input type="text" class="modal-input" placeholder="Price" name="productPrice">
+                </div>
+
+                <div class="modal-product-stock">
+                    <label for="text-tickets" class="modal-label">
+                        Số Lượng
+                    </label>
+                    <input type="text" class="modal-input" placeholder="Stock" name="productStock">
+                </div>
+                <div class="modal-product-description">
+                    <label for="text-tickets" class="modal-label">
+                        Thông Tin Chi Tiết
+                    </label>
+                    <textarea name="productDes" cols="80" rows="5" style="min-width:100%"></textarea>
+                </div>
+                <div class="">
+                    <label for="text-tickets" class="modal-label">
+                        Chọn Danh Mục Cho Sản Phẩm
+                    </label>
+                    <select name="cttr" id="" class="form-control" onfocus='this.size=5;' onblur='this.size=1;' onchange='this.size=1; this.blur();' style="max-width:50%">
+                        @foreach (var item in ViewBag.Categorys)
+                        {
+                            <option value="@item.IDCategory">@item.CategoryName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group upload-form" id="uploadForm" style="margin-top:20px">
+                    <h4>Sửa ảnh</h4>
+                    <input type="file" name="UploadEdit" class="form-control-file" id="UploadEdit" accept=".jpg, .jpeg, .png">
+                </div>
+
+                <div class="add-attribute row" style="max-height:200px">
+                    <table class="table table-bordered">
+                        <thead class="bg-dark" style="color:white">
+                            <tr>
+                                <td class="col-8">Tên Thuộc Tính</td>
+                                <td class="col-4">Giá Trị</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.Attributes)
+                            {
+                                <tr>
+                                    <td>@item.AttributeName</td>
+                                    <td>
+                                        <input id="enter-value" name="productAttr1" type="text" placeholder="Default Value" attr="@item.IdAttribute">
+                                        <input type="hidden" name="attrID" value="@item.IdAttribute"/>
+
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <footer class="modal-footer">
+                <button class="buy-tickets save">
+                    <i class="fas fa-check"></i>
+                    LƯU THAY ĐỔI
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+
+@*VER2MODAL*@
+<div class="modalver2" style="position:fixed;top:0;bottom:0;right:0;left:0;z-index:4">
+    <div class="modal-container">
+        <div class="closever2">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Thêm Sản Phẩm
+        </header>
+        <form id="addform">
+            <div class="modal-body">
+                <div class="modal-product-name">
+                    <label for="text-tickets" class="modal-label">
+                        Tên Sản Phẩm
+                    </label>
+                    <input type="text" class="modal-input" placeholder="Name" name="productName2">
+                </div>
+                <div class="modal-product-price">
+                    <label for="text-tickets" class="modal-label">
+                        Giá Cả
+                    </label>
+                    <input type="text" class="modal-input" placeholder="Price" name="productPrice2">
+                </div>
+
+                <div class="modal-product-stock">
+                    <label for="text-tickets" class="modal-label">
+                        Số Lượng
+                    </label>
+                    <input type="text" class="modal-input" placeholder="Stock" name="productStock2">
+                </div>
+                <div class="modal-product-description">
+                    <label for="text-tickets" class="modal-label">
+                        Thông Tin Chi Tiết Sản Phẩm
+                    </label>
+                    <textarea name="productDes2" cols="80" rows="5" style="min-width:100%"></textarea>
+                </div>
+                <div class="">
+                    <label for="text-tickets" class="modal-label">
+                        Chọn Danh Mục Cho Sản Phẩm
+                    </label>
+                    <select name="idCate" id="" class="form-control" onfocus='this.size=5;' onblur='this.size=1;' onchange='this.size=1; this.blur();' style="max-width:50%">
+                        @foreach (var item in ViewBag.Categorys)
+                        {
+                            <option value="@item.IDCategory">@item.CategoryName</option>
+                        }
+                    </select>
+                </div>
+
+                    <div class="form-group upload-form" id="uploadForm" style="margin-top:20px">
+                        <h4>Thêm ảnh</h4>
+                        <input type="file" name="imgUp" class="form-control-file" id="imgUp" accept=".jpg, .jpeg, .png">
+                    </div>
+
+                <div class="add-attribute row" style="max-height:200px">
+                    <table class="table table-bordered">
+                        <thead class="bg-dark" style="color:white">
+                            <tr>
+                                <td class="col-8">Attribute Name</td>
+                                <td class="col-4">Value</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.Attributes)
+                            {
+                                <tr>
+                                    <td>@item.AttributeName</td>
+                                    <td>
+                                        <input type="text" name="attrValue" placeholder="Default Value">
+                                        <input name="attr" type="hidden" value="@item.IdAttribute">
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+             
+            <footer class="modal-footer">
+                <button class="buy-tickets save">
+                    <i class="fas fa-check"></i>
+                    LƯU
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        const editBtns = document.querySelectorAll('.btn-edit');
+        const modal = document.querySelector('.modal');
+        const modalClose = document.querySelector('.close');
+        const delBtns = document.querySelectorAll('.btn-del');
+        const modalver2 = document.querySelector('.modalver2')
+        const addBtns = document.querySelector('.btn-add');
+        const modalClose2 = document.querySelector('.closever2');
+        addBtns.addEventListener('click', showAdd);
+        modalClose2.addEventListener('click', closeAdd);
+
+
+        function showAdd() {
+            modalver2.classList.add('open');
+            $('#addform').validate({
+                rules: {
+                    productName2: {
+                        required: true,
+                        minlength: 6,
+                        maxlength: 256,
+                    },
+                    productPrice2: {
+                        required: true,
+                        minlength: 4,
+                        maxlength: 12,
+                        digits: true,
+                    },
+                    productStock2: {
+                        required: true,
+                        minlength: 0,
+                        maxlength: 9999,
+                        digits: true,
+                    },
+                    imgUp: {
+                        required: true
+                    }
+                   
+                },
+                messages: {
+                    productName2: {
+                        required: "Vui lòng nhập tên sản phẩm",
+                        minlength: "Ít nhất nhập 6 kí tự",
+                        maxlength: "Nhập nhiều nhất 256 kí tự",
+                    },
+                    productPrice2: {
+                        required: "Vui lòng nhập giá sản phẩm",
+                        minlength: "Giá không thể bé hơn đơn vị nghàn",
+                        maxlength: "Giá không thể hơn nghìn tỷ",
+                        digits: "Vui lòng nhập số",
+                    },
+                    productStock2: {
+                        required: "Vui lòng nhập số lượng sản phẩm",
+                        minlength: "Số lượng không thể bé hơn 0",
+                        maxlength: "Số lượng không thế lớn hơn 9999",
+                        digits: "Vui lòng nhập số",
+                    },
+                    imgUp: {
+                        required:"Vui lòng chọn ảnh"
+                    }
+                   
+
+                },
+                submitHandler: function (form) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/addproduct",
+                        data: new FormData(form),
+                        dataType: "json",
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response == false) {
+                                alert("Thêm sản phẩm không thành công");
+                            }
+                            else {
+                                alert("Thêm sản phẩm thành công.");
+                                window.location.href = window.location.href;
+                            }
+                        }
+                    });
+                   
+                }
+            })
+        }
+        
+        function closeAdd() {
+            modalver2.classList.remove('open');
+        }
+        function showEdit() {
+            var pID = $(this).attr("pID");
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/getProduct",
+                data: { pID: pID },
+                dataType: "json",
+
+                    success: function (response) {
+                        console.log(response);
+                        var pName = response.name;
+                        var pPrice = response.price;
+                        var pStock = response.stock;
+                        var pDes = response.description;
+                        var attr = response.productAttributes;                       
+                        $("input[name='productName']").val(pName);
+                        $("input[name='productPrice']").val(pPrice);
+                        $("input[name='productStock']").val(pStock);
+                        $("textarea[name='productDes']").val(pDes);
+                        $("input[name='proID']").val(pID);
+                        for (var i = 0; i < attr.length; i++) {
+
+                        $("input[attr='" + attr[i].idAttribute + "']").val(attr[i].value);
+                    }
+                    var category = response.category[0].idCategory;
+                    $("option[value='" + category + "']").prop("selected", true);
+                }
+
+            });
+
+            modal.classList.add('open')
+            $('#editform').validate({
+                rules: {
+                    productName: {
+                        required: true,
+                        minlength: 6,
+                        maxlength: 256,
+                    },
+                    productPrice: {
+                        required: true,
+                        minlength: 4,
+                        maxlength: 12,
+                        digits: true,
+                    },
+                    productStock: {
+                        required: true,
+                        minlength: 0,
+                        maxlength: 9999,
+                        digits: true,
+                    },
+                    //attribute: {
+                    //    required: true,
+                    //    minlength: 1,
+                    //    maxlength: 256,
+                    //},
+                },
+                messages: {
+                    productName: {
+                        required: "Vui lòng nhập tên sản phẩm",
+                        minlength: "Ít nhất nhập 6 kí tự",
+                        maxlength: "Nhập nhiều nhất 256 kí tự",
+                    },
+                    productPrice: {
+                        required: "Vui lòng nhập giá sản phẩm",
+                        minlength: "Giá không thể bé hơn đơn vị nghàn",
+                        maxlength: "Giá không thể hơn nghìn tỷ",
+                        digits: "Vui lòng nhập số",
+                    },
+                    productStock: {
+                        required: "Vui lòng nhập số lượng sản phẩm",
+                        minlength: "Số lượng không thể bé hơn 0",
+                        maxlength: "Số lượng không thế lớn hơn 9999",
+                        digits: "Vui lòng nhập số",
+                    },
+                    //attribute: {
+                    //    required: "Vui lòng nhập đầy đủ thuộc tính",
+                    //    minlength: "Số ký tự phải lớn hơn 1",
+                    //    maxlength: "Số ký tự phải bé hơn 256",
+                    //},
+                },
+                submitHandler: function (form) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/editproduct",
+                        data: new FormData(form),
+                        dataType: "json",
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response == false) {
+                                alert("Sửa sản phẩm không thành công");
+                            }
+                            else {
+                                alert("Sửa sản phẩm thành công.");
+                                window.location.href = window.location.href;
+                            }
+                        }
+                    });
+                },
+                
+            })
+        }
+        function closeEdit() {
+            modal.classList.remove('open')
+        }
+        for (const editBtn of editBtns) {
+            editBtn.addEventListener('click', showEdit)
+        }
+        modalClose.addEventListener('click', closeEdit)
+
+        $("button[name='delete']").click(function () {
+            var pdID = $(this).attr("pdID");
+            $.ajax({
+                type: "POST",
+                url: "/admin/deleteproduct",
+                data: { pdID: pdID },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response == false) {
+                        alert("Xóa sản phẩm không thành công");
+                    }
+                    else {
+                        alert("Xóa sản phẩm thành công.");
+                        window.location.href = window.location.href;
+                    }
+                }
+            });
+        })
+        
+    </script>
+}

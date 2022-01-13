@@ -1,0 +1,75 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Danh Mục Đã Xóa";
+}
+
+@model List<TeyvatCafe.Models.Category>
+
+<div>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">DANH MỤC ĐÃ XÓA</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+                <li class="breadcrumb-item active">DANH MỤC ĐÃ XÓA</li>
+            </ol>
+
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="bg-dark" style="color:white">
+                        <tr>
+
+                            <td>Tên Danh Mục</td>
+                            <td>Khôi Phục Danh Mục</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    <p><h5 class="categorye-name" style="color:black">@item.CategoryName</h5></p>
+                                </td>
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top: 0px !important">
+                                        <button class="btn btn-primary btn-editcategory" name="restore" ctgrID="@item.IDCategory">Khôi Phục</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <div class="d-flex justify-content-end" style="margin-right: 145px">
+        <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/deletedcategory" ma-item="5">
+        </pagination-helper>
+    </div>
+
+</div>
+@section Scripts{
+    <script>
+        $("button[name='restore']").click(function () {
+            var ctgrID = $(this).attr("ctgrID");
+            $.ajax({
+                type: "POST",
+                url: "/admin/restorecategory",
+                data: { ctgrID: ctgrID },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response == false) {
+                        alert("Khôi phục danh mục không thành công");
+                    }
+                    else {
+                        alert("Khôi phục danh mục thành công.");
+                        window.location.href = window.location.href;
+                    }
+                }
+            });
+        })
+    </script>
+}

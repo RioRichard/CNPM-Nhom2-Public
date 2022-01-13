@@ -1,0 +1,92 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Thùng Rác Nhân Viên";
+
+}
+@model List<AccountStaff>;
+<div>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">Nhân Viên Đã Ban</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+                <li class="breadcrumb-item active">Nhân Viên Đã Ban</li>
+            </ol>
+
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="bg-dark" style="color:white">
+                        <tr>
+
+                            <td>UserName</td>
+                            <td>Email</td>
+                            <td>Quyền</td>
+                            <td>Khôi Phục Nhân Viên</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            if (@item.IsBanned == true)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <p><h5 class="categorye-name" style="color:black">@item.UserName</h5></p>
+                                    </td>
+                                    <td>
+                                        <p><h5 class="Category-id" style="color:black">@item.Email</h5></p>
+                                    </td>
+                                    <td>
+                                        <p>
+                                            <h5 class="Category-id" style="color:black">
+                                                @foreach (var item2 in item.ListRole)
+                                                {
+                                                    @item2.RoleName <br />
+                                                }
+                                            </h5>
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top: 0px !important">
+                                            <button class="btn btn-primary btn-editstaff" name="restore" sID="@item.IDStaff">Khôi Phục</button>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+<div class="d-flex justify-content-end" style="margin-right: 145px">
+    <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/bannedstaff" ma-item="9">
+    </pagination-helper>
+</div>
+@section Scripts{
+    <script>
+        $("button[name='restore']").click(function () {
+            var sID = $(this).attr("sID");
+            $.ajax({
+                type: "POST",
+                url: "/admin/restorestaff",
+                data: { sID: sID },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response == false) {
+                        alert("Khôi phục Staff không thành công");
+                    }
+                    else {
+                        alert("Khôi phục Staff thành công.");
+                        window.location.href = window.location.href;
+                    }
+                }
+            });
+        })
+    </script>
+}

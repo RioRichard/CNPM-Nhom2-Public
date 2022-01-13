@@ -1,0 +1,102 @@
+﻿@model List<TeyvatCafe.Models.Product>
+@{
+    ViewBag.Title = "Trang chủ";
+}
+<div class="row">
+    <div class="col-3">
+        <partial name="_Category" model="ViewBag.Category" />
+    </div>
+    <div class="col-9">
+        <div class="container-fluid">
+            <ul class="nav justify-content-end bg-dark" style="margin-right: 17px">
+                <li class="nav-item">
+                    <a class="nav-link active text-light" href="#">Cà phê</a>
+
+            </ul>
+            <div class="row">
+
+                @foreach (var item in ViewBag.Cafe)
+                {
+                    if(item.IsDelete == false )
+                    { 
+                <div class="col-3">
+                    <div class="card" style="max-height: 600px; max-width: 300px; min-height: 400px; min-width: 255px; ">
+                        <a href="/product/@item.IdProduct">
+                            <img src="/img/productImg/@item.ImageUrl" alt="@item.Name" class="card-img-top" />
+                        </a>
+                        <div class="card-body">
+                            <a href="/product/@item.IdProduct"><h5 class="card-title" style="min-height:48px">@item.Name</h5></a>
+
+
+                            <h6 class="card-price">Giá cả: @item.Price.ToString("#,##0") VNĐ</h6>
+                        </div>
+                    </div>
+                </div>
+                }
+                    
+                }
+            </div>
+        </div>
+        <div class="container-fluid">
+            <ul class="nav justify-content-end bg-dark" style="margin-right: 17px">
+                <li class="nav-item">
+                    <a class="nav-link active text-light" href="#">Dụng cụ cà phê</a>
+
+            </ul>
+            <div class="row">
+
+                @foreach (var item in ViewBag.DungCuCafe)
+                {
+                    if (item.IsDelete == false)
+                    {
+                    <div class="col-3">
+                        <div class="card" style="max-height: 600px; max-width: 300px; min-height: 420px; min-width: 255px; ">
+                            <a href="/product/@item.IdProduct">
+                                <img src="./img/productImg/@item.ImageUrl" class="card-img-top" alt="@item.Name">
+                            </a>
+                            <div class="card-body">
+                                <a href="/product/@item.IdProduct">
+                                    <h5 class="card-title" style="min-height: 48px">@item.Name</h5>
+                                </a>
+                                <h6 class="card-price">Giá cả: @item.Price.ToString("#,##0" ) VNĐ</h6>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="container-fluid">
+            <ul class="nav justify-content-end bg-dark" style="margin-right: 17px">
+                <li class="nav-item">
+                    <a class="nav-link active text-light" href="#">Máy pha cà phê</a>
+
+            </ul>
+            <div class="row">
+
+                @foreach (var item in Model)
+                {
+                    if (item.IsDelete == false)
+                    {
+                    <div class="col-3">
+                        <div class="card" style="max-height: 600px; max-width: 300px; min-height: 400px; min-width: 255px; ">
+                            <a href="/product/@item.IdProduct">
+                                <img src="./img/productImg/@item.ImageUrl" class="card-img-top" alt="@item.Name">
+                            </a>
+                            <div class="card-body">
+                                <a href="/product/@item.IdProduct">
+                                    <h5 class="card-title" style="min-height: 48px">@item.Name</h5>
+                                </a>
+                                <h6 class="card-price">Giá cả: @item.Price.ToString("#,##0") VNĐ</h6>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                }
+            </div>
+        </div>
+        <br />
+
+
+    </div>
+</div>

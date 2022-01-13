@@ -1,0 +1,249 @@
+﻿@inject IConfiguration Configuration
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/styles.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheets" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+
+    <style>
+        .modal, .modalver2 {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .modal-container {
+            background-color: white;
+            width: 60%;
+            max-width: calc(100%-32px);
+            min-height: 200px;
+            position: relative;
+            overflow-y: initial !important;
+        }
+
+        .modal-header {
+            background-color: #009688;
+            height: 130px;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            line-height: 65px;
+            color: white;
+        }
+
+        .ti-bag {
+            margin: 12px;
+        }
+
+        .close, .closever2 {
+            position: absolute;
+            right: 0;
+            top: 0;
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+        }
+
+            .close:hover {
+                color: black;
+                background-color: #ccc;
+            }
+
+        .modal-body {
+            padding: 15px;
+            height: 80vh;
+            overflow-y: auto;
+            max-height: 600px
+        }
+
+        .modal-label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .modal-input {
+            padding: 8px;
+            width: 100%;
+            font-size: 15px;
+        }
+
+        .buy-tickets {
+            width: 100%;
+            padding: 16px;
+            background-color: #009688;
+            margin: 16px 0;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+            .buy-tickets:hover {
+                opacity: 0.8;
+            }
+
+        .modal-footer {
+            text-align: right;
+            padding: 16px;
+            border: none;
+        }
+
+            .modal-footer a {
+                color: #2196f3;
+            }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal.close {
+            display: none;
+        }
+
+        .modalver2.open {
+            display: flex;
+        }
+
+        .modalver2.close {
+            display: none;
+        }
+
+        #footer {
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="bg-dark">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-2">
+                        <a href="/">
+                            <img src="~/img/icon/@Configuration["ImageUrlLogo"]" style="height: 200px" alt="Logo" />
+                        </a>
+                    </div>
+                    <div class="col-10">
+                        <img src="~/img/icon/@Configuration["ImageUrlBanner"]" style="max-height:200px;min-width:1500px" alt="Banner"/>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="row" style="min-height:100vh">
+            <div class="col-2">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading" style="font-size:20px; font-weight:bold">Danh mục quản lí</div>
+
+                            <a class="nav-link" href="/admin" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                                Thông tin cá nhân
+                            </a>
+                            <a class="nav-link" href="/admin/changepassword" style="font-size:18px">
+                                <div class="sb-nav-link-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                Đổi mật khẩu
+                            </a>
+                            <a class="nav-link" href="/admin/StaffManagement" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                Quản Lý Nhân Viên
+                            </a>
+                            <a class="nav-link" href="/admin/product" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-archive"></i></div>
+                                Sản Phẩm
+                            </a>
+                            <a class="nav-link" href="/admin/attribute" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                                Thuộc Tính
+                            </a>
+                            <a class="nav-link" href="/admin/category" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-certificate"></i></div>
+                                Danh Mục
+                            </a>
+                            <a class="nav-link" href="/admin/invoicedetail" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-receipt"></i></div>
+                                Chi Tiết Đơn Hàng
+                            </a>
+                            <a class="nav-link" href="/admin/chart" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-pie"></i></div>
+                                Bảng Thống Kê
+                            </a>
+                            <a class="nav-link" href="/admin/setting" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
+                                Thiết lập trang web
+                            </a>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-trash-alt"></i></div>
+                                Thùng Rác
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+
+                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/admin/bannedstaff">-Nhân Viên</a>
+                                    <a class="nav-link" href="/admin/deletedattribute">-Thuộc Tính</a>
+                                    <a class="nav-link" href="/admin/deletedcategory">-Danh Mục</a>
+                                    <a class="nav-link" href="/admin/deletedproduct">-Sản Phẩm</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link" href="/adminauth/LogOut" style="font-size:18px">
+                                <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
+                                Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="col-10">
+                @RenderBody()
+            </div>
+        </div>
+        <footer class="bg-dark text-light text-center" style="margin-top:10px;">
+            <div class="row">
+
+                <div class="col-4">
+                    <h1>Website kinh doanh cafe Teyvat</h1>
+                </div>
+                <div class="col-4">
+                    <h3>Các thành viên của nhóm</h3>
+                    <ul class="Member-name" style="list-style-type:none">
+                        <li>Phùng Ngọc Thành</li>
+                        <li>Lê Phạm Quốc Thái</li>
+                        <li>Trương Thiên Bảo</li>
+                        <li>Nguyễn Mạnh Cường</li>
+                    </ul>
+                </div>
+                <div class="col-4">
+                    <h1>Đồ án môn <br />Công nghệ phần mềm </h1>
+
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/bootstrap.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

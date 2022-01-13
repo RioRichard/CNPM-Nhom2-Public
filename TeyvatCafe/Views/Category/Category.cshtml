@@ -1,0 +1,42 @@
+﻿@model List<Product>
+@{
+    ViewBag.Title = "Các sản phẩm cà phê";
+}
+
+<div class="container-fluid" style=" padding: 0!important">
+    <div class="row">
+        <div class="col-3">
+            <partial name="_Category" model="ViewBag.Category" />
+        </div>
+        <div class="col-9">
+            <div class="container-fluid">
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                        <div class=" col-3" style="padding-bottom:40px">
+                            <div class="card border-secondary" style="max-height: 500px; max-width: 300px; min-height: 250px; min-width: 150px; ">
+                                <a href="/product/@item.IdProduct">
+                                    <img src="/img/productImg/@item.ImageUrl" class="card-img-top" alt="@item.Name">
+                                </a>
+                                <div class="card-body">
+                                    <a href="/product/@item.IdProduct">
+                                        <h5 style="min-height:70px " class="card-title">@item.Name</h5>
+                                    </a>
+
+                                    <h6 class="card-price">Giá cả: @item.Price.ToString("#,##0") VND</h6>
+
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="d-flex justify-content-end" style="margin-right: 145px">
+    <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/category" ma-item="@ViewBag.MaId">
+    </pagination-helper>
+</div>

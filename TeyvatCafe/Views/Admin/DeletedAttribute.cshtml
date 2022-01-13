@@ -1,0 +1,78 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Thuộc Tính Đã Xóa";
+}
+
+
+@model List<TeyvatCafe.Models.Attribute>
+<div>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">THUỘC TÍNH ĐÃ XÓA</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+                <li class="breadcrumb-item active">THUỘC TÍNH ĐÃ XÓA</li>
+            </ol>
+
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="bg-dark" style="color:white">
+                        <tr>
+
+                            <td>Tên Thuộc Tính</td>
+                            <td>Khôi Phục Thuộc Tính</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    <p><h5 class="Attribute-id" style="color:black">@item.AttributeName</h5></p>
+                                </td>
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top:0px !important">
+                                        <button class="btn btn-primary btn-editattribute" name="restore" attrID="@item.IdAttribute">Khôi Phục</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <div class="d-flex justify-content-end" style="margin-right: 145px">
+        <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/deletedattribute" ma-item="4">
+        </pagination-helper>
+    </div>
+
+</div>
+@section Scripts{
+    <script>
+        $("button[name='restore']").click(function () {
+            var attrID = $(this).attr("attrID");
+            $.ajax({
+                type: "POST",
+                url: "/admin/restoreattribute",
+                data: { attrID: attrID },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response == false) {
+                        alert("Khôi phục thuộc tính không thành công");
+                    }
+                    else {
+                        alert("Khôi phục thuộc tính thành công.");
+                        window.location.href = window.location.href;
+                    }
+                }
+            });
+        })
+    </script>
+}

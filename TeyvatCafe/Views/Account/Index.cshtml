@@ -1,0 +1,129 @@
+﻿@model Account
+
+@{ 
+    Layout = "_LayoutAccount";
+    ViewBag.Title = "Thông tin tài khoản";
+}
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">THÔNG TIN TÀI KHOẢN</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/account">Tài khoản</a></li>
+            <li class="breadcrumb-item active">Thông tin tài khoản</li>
+        </ol>
+
+        <div class="card-body">
+            <div class="form-group">
+                <label class="small mb-1" for="inputEmailAddress">UserName</label>
+                <input class="form-control py-4" id="inputEmailAddress" type="text" value="@Model.UserName" disabled />
+            </div>
+            <div class="form-group">
+                <label class="small mb-1" for="email">Email</label>
+                <input class="form-control py-4" id="email" type="email" value="@Model.Email" disabled />
+            </div>
+            <form method="post" name="changeInfo" id="changeInfo">
+
+                <div class="form-group">
+                    <label class="small mb-1" for="fullname">Tên đầy đủ</label>
+                    <input class="form-control py-4" id="fullname" type="text" name="fullname" placeholder="" value="@Model.FullName"/>
+                </div>
+                <h4>Giới tính</h4>
+
+
+                <div class="form-group">
+                    @switch (Model.Gender)
+                    {
+                        case true:
+                            <input type="radio" id="Nam" name="gender" value="true" checked />
+                            <label for="Nam">Nam</label><br />
+                            <input type="radio" id="Nu" name="gender" value="false" />
+                            <label for="Nu">Nu</label><br />
+                            <label for="gender" class="error"></label>
+                            break;
+                        case false:
+                            <input type="radio" id="Nam" name="gender" value="true" />
+                            <label for="Nam">Nam</label><br />
+                            <input type="radio" id="Nu" name="gender" value="false" checked />
+                            <label for="Nu">Nu</label><br />
+                            <label for="gender" class="error"></label>
+                                    break;
+
+                        default:
+                            <input type="radio" id="Nam" name="gender" value="true" />
+                            <label for="Nam">Nam</label><br />
+                            <input type="radio" id="Nu" name="gender" value="false" />
+                            <label for="Nu">Nu</label><br />
+                            <label for="gender" class="error"></label>
+                            break;
+                    }
+                    
+
+
+
+                </div>
+
+                <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                    <button class="btn btn-primary">Cập nhật</button>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</main>
+@section Scripts{ 
+    <script>
+        jQuery.validator.addMethod("nameRegex", function (value, element) {
+            var regex = /^[^\s][a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s]*$/.test(value);
+            return this.optional(element) || regex
+        })
+
+        $(document).ready(function () {
+           
+            $("#changeInfo").validate({
+
+                rules: {
+                    fullname: {
+                        required: true,
+                        nameRegex: true,
+                        maxlength: 64,
+                        minlength: 4
+                    },
+                    gender: {
+                        required: true,
+
+
+                    },
+                },
+                messages: {
+                    fullname: {
+                        required: "Bắt buộc nhập username",
+                        nameRegex: "Bắt đầu bằng chữ, gồm các kí tự chữ và khoảng cách, không có số và kí tự đặc biệt",
+                        maxlength: "Hãy nhập tối đa 64 ký tự",
+                        minlength: "Hãy nhập tối thiểu 4 ký tự"
+
+                    },
+                    gender: {
+                        required: "Bắt buộc chọn giới tính",
+
+
+                    },
+
+                }
+            });
+
+           
+
+        });
+
+
+
+
+
+
+
+
+
+
+    </script>
+}

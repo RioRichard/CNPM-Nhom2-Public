@@ -1,0 +1,152 @@
+﻿@model List<Invoice>
+
+@{
+    Layout = "_LayoutAccount";
+    ViewBag.Title = "Đơn hàng của bạn";
+}
+<main>
+    <div class="container-fluid">
+
+        <h1 class="mt-4" style="text-transform:uppercase;">Đơn hàng của bạn</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/account">Tài khoản</a></li>
+            <li class="breadcrumb-item active">Đơn hàng của bạn</li>
+        </ol>
+        <table class="table table-bordered">
+            <thead class="bg-dark text-light">
+                <tr>
+                    <td>Số hoá đơn</td>
+                    <td>Tình trạng</td>
+                    <td>Địa chỉ nhận</td>
+                    <td>Người nhận</td>
+                    <td>Số điện thoại</td>
+                    <td>Tổng số tiền</td>
+                    <td>Chi tiết hoá đơn</td>
+
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="product_tr">
+                        <td>@item.IdInvoice</td>
+                        <td>@item.Status</td>
+                        <td>@item.Address.Addressed</td>
+                        <td>@item.Address.Receiver</td>
+                        <td>@item.Address.Phone</td>
+
+
+                        <td>
+                            @item.Total.ToString("#,##0") VNĐ
+                        </td>
+
+
+
+                        <td><button name="detail" class="btn btn-outline-danger btn-edit" Incid="@item.IdInvoice"  type="button">Chi tiết</button></td>
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+</main>
+<div class="modal" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="close">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Chi tiết đơn hàng
+        </header>
+        <div class="modal-body">
+            <table class="table table-bordered">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <td>Tên sản phẩm</td>
+                        <td>Hình ảnh</td>
+                        <td>Giá tiền</td>
+                        <td>Sô lượng</td>
+                        <td>Tổng số tiền</td>
+
+
+
+                    </tr>
+                </thead>
+                <tbody id="tbodyModal">
+                </tbody>
+
+            </table>
+            <div class="d-flex justify-content-end">
+                <p>Tổng cộng: <b id="total"></b></p>
+            </div>
+
+        </div>
+        
+
+    </div>
+</div>
+@section Scripts{
+    <script>
+        const editBtns = document.querySelectorAll('.btn-edit');
+        const modal = document.querySelector('.modal');
+        const modalClose = document.querySelector('.close');
+
+
+        function showEdit() {
+            
+            modal.classList.add('open');
+            var id = $(this).attr('Incid');
+            $.get('/invoice/InvoiceDetail', { IdInvoice: id }, (r) => {
+                fillTable(r);
+            });
+            
+            
+        }
+        function closeEdit() {
+            modal.classList.remove('open')
+            clearModal();
+        }
+        for (const editBtn of editBtns) {
+            editBtn.addEventListener('click', showEdit)
+        }
+        modalClose.addEventListener('click', closeEdit)
+        const delBtns = document.querySelectorAll('.btn-del');
+        function fillTable(response) {
+            var listProduct = response.productCarts;
+            var text = '';
+            for (let i = 0; i < listProduct.length; i++) {
+                var name = listProduct[i].productName;
+                var quantity = listProduct[i].quantity;
+                var img = listProduct[i].urlImage;
+                var price = listProduct[i].paymentPrice;
+                var total = listProduct[i].total;
+                text += "<tr>";
+                text += "<td>" + name + "</td>"
+                text += '<td><img src="/img/productImg/' + img + '" alt="' + name + '" width="100" height="100"</td > ';
+                text += "<td>" + numberWithCommas(price) + " VNĐ</td>"
+                text += "<td>" + quantity + "</td>"
+                text += "<td>" + numberWithCommas(total) + " VNĐ</td>"
+
+                text += "</tr>";
+            }
+            document.getElementById("tbodyModal").innerHTML = text;
+            document.getElementById("total").innerHTML = numberWithCommas(response.total) + ' VNĐ';
+        }
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        function clearModal() {
+            document.getElementById("tbodyModal").innerHTML = '';
+            document.getElementById("total").innerHTML = '';
+        }
+        
+
+    </script>
+}

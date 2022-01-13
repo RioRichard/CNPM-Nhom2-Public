@@ -1,0 +1,146 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Chỉnh sửa trang web";
+}
+
+<h1 class="mt-4" style="text-transform:uppercase;">Chỉnh sửa trang web</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+    <li class="breadcrumb-item active">Chỉnh sửa trang web</li>
+</ol>
+<table class="table table-bordered">
+
+    <thead class="bg-dark text-light">
+        <tr>
+            <td>Vị trí</td>
+            <td>Hình ảnh cũ</td>
+            <td>Hình ảnh mới</td>
+            <td>Chọn hình ảnh</td>
+            <td>Đổi</td>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Logo</td>
+            <td>
+                <img src="~/img/icon/@Configuration["ImageUrlLogo"]" alt="Current logo" height="150" />
+            </td>
+            <td>
+                <img src="" id="outLogo" alt="newBanner" height="150" />
+            </td>
+            <td>
+                <input type="file" name="logoFile" id="logo" accept=".png, .jpg, .jpeg" />
+            </td>
+            <td><button class="btn btn-primary" id="changeLogo" type="button">Đổi hình ảnh</button></td>
+
+        </tr>
+        <tr>
+            <td>Banner</td>
+            <td>
+                <img src="~/img/icon/@Configuration["ImageUrlBanner"]" alt="Current banner" height="150" />
+
+            </td>
+            <td>
+                <img src="" alt="New Banner" height="150" id="outBanner" />
+            </td>
+            <td>
+                <input type="file" id="banner" name="bannerFile" accept=".png, .jpg, .jpeg" />
+            </td>
+            <td><button class="btn btn-primary" id="changeBanner" type="button">Đổi hình ảnh</button></td>
+
+        </tr>
+    </tbody>
+</table>
+
+
+@section Scripts{
+    <script>
+        $('#logo').change(function (evt) {
+            var tgt = evt.target || window.event.srcElement,
+                files = tgt.files;
+
+            // FileReader support
+            if (FileReader && files && files.length) {
+                var fr = new FileReader();
+                fr.onload = function () {
+                    document.getElementById('outLogo').src = fr.result;
+                }
+                fr.readAsDataURL(files[0]);
+            }
+        })
+        $('#banner').change(function (evt) {
+            var tgt = evt.target || window.event.srcElement,
+                files = tgt.files;
+
+            // FileReader support
+            if (FileReader && files && files.length) {
+                var fr = new FileReader();
+                fr.onload = function () {
+                    document.getElementById('outBanner').src = fr.result;
+                }
+                fr.readAsDataURL(files[0]);
+            }
+        })
+
+        $('button[id="changeLogo"]').click(function () {
+            var image = document.getElementById("logo").files;
+            console.log(image[0].name);
+            var formData = new FormData();
+            var totalFiles = document.getElementById("logo").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("logo").files[i];
+                formData.append("logoFile", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '/admin/testfile',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert('succes!!');
+                    window.location.href = window.location.href;
+                },
+                error: function (error) {
+                    alert("errror");
+                }
+            })
+
+        })
+        $('button[id="changeBanner"]').click(function () {
+            var image = document.getElementById("banner").files;
+            console.log(image[0].name);
+            var formData = new FormData();
+            var totalFiles = document.getElementById("banner").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("banner").files[i];
+                formData.append("bannerFile", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '/admin/UploadBanner',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert('succes!!');
+                    window.location.href = window.location.href;
+                },
+                error: function (error) {
+                    alert("errror");
+                }
+            })
+
+        })
+    </script>
+}
+
+

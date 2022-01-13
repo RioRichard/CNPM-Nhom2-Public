@@ -1,0 +1,295 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Danh Mục";
+}
+
+@model List<TeyvatCafe.Models.Category>
+
+<div>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">DANH MỤC</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+                <li class="breadcrumb-item active">DANH MỤC</li>
+            </ol>
+
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="bg-dark" style="color:white">
+                        <tr>
+
+                            <td>Tên Danh Mục</td>
+                            <td>Sửa Danh Mục</td>
+                            <td>Xóa Danh Mục</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    <p><h5 class="categorye-name" style="color:black">@item.CategoryName</h5></p>
+                                </td>
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top: 0px !important">
+                                        <button class="btn btn-primary btn-editcategory" ctgrName="@item.CategoryName"
+                                                ctgrID="@item.IDCategory"
+                                                ctgrFather="@item.FatherCategory">
+                                            SỬA
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top:0px !important">
+                                        <button class="btn btn-primary" name="delete" ctgrID2="@item.IDCategory">XÓA</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                        <button class="btn btn-primary btn-addcategory">Thêm Danh Mục</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="d-flex justify-content-end" style="margin-right: 145px">
+    <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/category" ma-item="3">
+    </pagination-helper>
+</div>
+
+@*MODALVER2*@
+<div class="modalver2" style="position:fixed;top:0;bottom:0;right:0;left:0;z-index:4;">
+    <div class="modal-container">
+        <div class="closever2">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Thêm Danh Mục
+        </header>
+        <form id="addform">
+            <div class="modal-body" style="max-height:300px">
+
+                <div class="modal-category-name">
+                    <label for="text-tickets" class="modal-label">
+                        Tên Danh Mục
+                    </label>
+                    <input id="text-tickets" type="text" class="modal-input" placeholder="Enter Category's Name" name="categoryName2">
+                </div>
+                <div class="WhoIsFather">
+                    <label for="text-tickets" class="modal-label">
+                        Chọn Danh Mục Cha (Mặc định là NULL)
+                    </label>
+                    <select name="IdFather" id="" class="form-control" onfocus='this.size=10;' onblur='this.size=1;' onchange='this.size=1; this.blur();' style="max-width:50%">
+                        <option value=" ">NULL</option>
+                        @foreach (var item in ViewBag.Fathers)
+                        {
+
+                            <option value="@item.IDCategory">@item.CategoryName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button class="buy-tickets save">
+                    <i class="fas fa-check"></i>
+                    LƯU
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+@*MODAL*@
+<div class="modal" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="close">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Sửa Danh Mục
+        </header>
+        <form id="editform">
+            <div class="modal-body" style="max-height:400px">
+
+                <div class="modal-category-name">
+                    <label for="text-tickets" class="modal-label">
+                        Tên Danh Mục
+                    </label>
+                    <input id="text-tickets" type="text" class="modal-input" placeholder="Enter Category's Name" name="categoryName">
+                    <input type="hidden" name="IdCate" />
+                </div>
+                <div class="WhoIsFather">
+                    <label for="text-tickets" class="modal-label">
+                        Chọn Danh Mục Cha ( Mặc định là NULL)
+                    </label>
+                    <select name="IDFather1" id="" class="form-control" onfocus='this.size=10;' onblur='this.size=1;' onchange='this.size=1; this.blur();' style="max-width:50%">
+                        <option value=" ">NULL</option>
+                        @foreach (var item in ViewBag.Fathers)
+                        {
+                            <option value="@item.IDCategory">@item.CategoryName</option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+            <footer class="modal-footer">
+                <button class="buy-tickets save">
+                    <i class="fas fa-check"></i>
+                    LƯU THAY ĐỔI
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        const editBtns = document.querySelectorAll('.btn-editcategory');
+        const addBtns = document.querySelectorAll('.btn-addcategory');
+        const modal = document.querySelector('.modal');
+        const modalver2 = document.querySelector('.modalver2');
+        const modalClose = document.querySelector('.close');
+        const modalver2close = document.querySelector('.closever2')
+
+
+
+        function showEdit() {
+            modal.classList.add('open')
+            var ctgrName = $(this).attr("ctgrName");
+            var ctgrID = $(this).attr("ctgrID");
+            var ctgrFather = $(this).attr("ctgrFather");
+
+            $("input[name='categoryName']").val(ctgrName);
+            $("option[value='" + ctgrFather + "']").prop("selected", true);
+            $("input[name='IdCate']").val(ctgrID);
+            $('#editform').validate({
+                rules: {
+                    categoryName: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 256,
+                    },
+                },
+                messages: {
+                    categoryName: {
+                        required: "Vui lòng nhập tên danh mục",
+                        minlength: "Ít nhất nhập 2 kí tự",
+                        maxlength: "Nhập nhiều nhất 256 kí tự",
+                    },
+
+                },
+                submitHandler: function (form) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/editcategory",
+                        data: $(form).serialize(),
+                        dataType: "json",
+
+                        success: function (response) {
+                            if (response == false) {
+                                alert("Sửa danh mục không thành công");
+                            }
+                            else {
+                                alert("Sửa danh mục thành công.");
+                                window.location.href = window.location.href;
+                            }
+
+
+                        }
+                    });
+                }
+            })
+
+        }
+
+        function closeEdit() {
+            modal.classList.remove('open')
+        }
+        function showAdd() {
+            modalver2.classList.add('open');
+
+            $('#addform').validate({
+                rules: {
+                    categoryName2: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 256,
+                    },
+                },
+                messages: {
+                    categoryName2: {
+                        required: "Vui lòng nhập tên danh mục",
+                        minlength: "Ít nhất nhập 2 kí tự",
+                        maxlength: "Nhập nhiều nhất 256 kí tự",
+                    },
+                },
+                submitHandler: function (form) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/addcategory",
+                        data: $(form).serialize(),
+                        dataType: "json",
+
+                        success: function (response) {
+                            if (response == false) {
+                                alert("Thêm danh mục không thành công");
+                            }
+                            else {
+                                alert("Thêm danh mục thành công.");
+                                window.location.href = window.location.href;
+                            }
+
+
+                        }
+                    });
+                }
+            })
+        }
+        function closeAdd() {
+            modalver2.classList.remove('open')
+        }
+        modalver2close.addEventListener('click', closeAdd)
+        for (const editBtn of editBtns) {
+            editBtn.addEventListener('click', showEdit)
+        }
+        for (const addBtn of addBtns) {
+            addBtn.addEventListener('click', showAdd)
+        }
+        modalClose.addEventListener('click', closeEdit)
+
+
+
+        $("button[name='delete']").click(function () {
+            var ctgrID2 = $(this).attr("ctgrID2");
+            $.ajax({
+                type: "POST",
+                url: "/admin/deletecategory",
+                data: { ctgrID2: ctgrID2 },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response == false) {
+                        alert("Xóa danh mục không thành công");
+                    }
+                    else {
+                        alert("Xóa danh mục thành công.");
+                        window.location.href = window.location.href;
+                    }
+                }
+            });
+        })
+    </script>
+}

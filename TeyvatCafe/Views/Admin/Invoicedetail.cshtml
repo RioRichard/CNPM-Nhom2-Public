@@ -1,0 +1,259 @@
+﻿@model List<Invoice>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Hóa Đơn";
+}
+<main>
+    <div class="container-fluid">
+
+        <h1 class="mt-4">Quản Lý Đơn Hàng</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+            <li class="breadcrumb-item active">Hóa Đơn Khách Hàng</li>
+        </ol>
+        <table class="table table-bordered">
+            <thead class="bg-dark text-light">
+                <tr>
+                    <td>Số hoá đơn</td>
+                    <td>Tình trạng</td>
+                    <td>Địa chỉ nhận</td>
+                    <td>Người nhận</td>
+                    <td>Số điện thoại</td>
+                    <td>Tổng số tiền</td>
+                    <td>Chi tiết hoá đơn</td>
+                    <td>Sửa tình trạng</td>
+
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="product_tr">
+                        <td>@item.IdInvoice</td>
+                        <td>@item.Status</td>
+                        <td>@item.Address.Addressed</td>
+                        <td>@item.Address.Receiver</td>
+                        <td>@item.Address.Phone</td>
+
+
+
+                        <td>
+                            @item.Total.ToString("#,##0") VNĐ
+                        </td>
+
+
+
+                        <td><button name="detail" class="btn btn-outline-danger btn-edit" Incid="@item.IdInvoice" type="button">Chi tiết</button></td>
+
+                        <td>
+                            <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top: 0px !important">
+                                <button class="btn btn-primary btn-editinvoicedetail" idIv="@item.IdInvoice"
+                                        idStatus="@item.IdStatus">
+                                    SỬA
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+</main>
+<div class="d-flex justify-content-end" style="margin-right: 145px">
+    <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/invoicedetail" ma-item="7">
+    </pagination-helper>
+</div>
+
+@*MODAL-INVOICE_DETAIL*@
+<div class="modal" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="close">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Chi tiết đơn hàng
+        </header>
+        <div class="modal-body">
+            <table class="table table-bordered">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <td>Tên sản phẩm</td>
+                        <td>Hình ảnh</td>
+                        <td>Giá tiền</td>
+                        <td>Số lượng</td>
+                        <td>Tổng số tiền</td>
+
+
+
+                    </tr>
+                </thead>
+                <tbody id="tbodyModal">
+                </tbody>
+
+            </table>
+            <div class="d-flex justify-content-end">
+                <p>Tổng cộng: <b id="total"></b></p>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+@*MODAL-STATUS-CHANGE*@
+<div class="modalver2" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="closever2">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Thay Đổi Trạng Thái Đơn Hàng
+        </header>
+        <form id="editform">
+            <div class="modal-body" style="max-height:150px">
+                <input type="hidden" name="IdInvoice" />
+                <div class="WhatisStatus">
+                    <label for="text-tickets" class="modal-label">
+                        Trạng Thái Hiện Tại Của Đơn Hàng
+                    </label>
+                    <select name="SelectStatus" id="" class="form-control" onfocus='this.size=5;' onblur='this.size=1;' onchange='this.size=1; this.blur();' style="max-width:100%">
+                        @foreach (var item in ViewBag.Status)
+                        {
+                            <option value="@item.IdStatus">@item.StatusName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button class="buy-tickets save">
+                    <i class="fas fa-check"></i>
+                    LƯU THAY ĐỔI
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        const editBtns = document.querySelectorAll('.btn-edit');
+        const editBtnsver2 = document.querySelectorAll('.btn-editinvoicedetail');
+
+        const modal = document.querySelector('.modal');
+        const modalver2 = document.querySelector('.modalver2');
+
+        const modalClose = document.querySelector('.close');
+        const modalver2close = document.querySelector('.closever2');
+
+        function showEditDetail() {
+
+            modalver2.classList.add('open');
+            var idIv = $(this).attr("idIv");
+            var idStatus = $(this).attr("idStatus");
+
+
+            $("input[name='IdInvoice']").val(idIv);
+            $("option[value='" + idStatus + "']").prop("selected", true);
+            $('#editform').validate({
+                submitHandler: function (form) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/editinvoicedetail",
+                        data: $(form).serialize(),
+                        dataType: "json",
+
+                        success: function (response) {
+                            if (response == false) {
+                                alert("Sửa tình trạng hoá đơn không thành công");
+                            }
+                            else {
+                                alert("Sửa tình trạng hoá đơn thành công.");
+                                window.location.href = window.location.href;
+                            }
+
+
+                        }
+                    });
+                }
+            })
+
+
+
+
+        }
+
+        function closeEditDetail() {
+            modalver2.classList.remove('open')
+            clearModal();
+        }
+        modalver2close.addEventListener('click', closeEditDetail)
+
+        for (const editBtnver2 of editBtnsver2) {
+            editBtnver2.addEventListener('click', showEditDetail)
+        }
+
+
+        function showEdit() {
+
+            modal.classList.add('open');
+            var id = $(this).attr('Incid');
+            $.get('/invoice/InvoiceDetail', { IdInvoice: id }, (r) => {
+                fillTable(r);
+            });
+
+
+        }
+        function closeEdit() {
+            modal.classList.remove('open')
+            clearModal();
+        }
+        for (const editBtn of editBtns) {
+            editBtn.addEventListener('click', showEdit)
+        }
+        modalClose.addEventListener('click', closeEdit)
+        const delBtns = document.querySelectorAll('.btn-del');
+        function fillTable(response) {
+            var listProduct = response.productCarts;
+            var text = '';
+            for (let i = 0; i < listProduct.length; i++) {
+                var name = listProduct[i].productName;
+                var quantity = listProduct[i].quantity;
+                var img = listProduct[i].urlImage;
+                var price = listProduct[i].paymentPrice;
+                var total = listProduct[i].total;
+                text += "<tr>";
+                text += "<td>" + name + "</td>"
+                text += '<td><img src="/img/productImg/' + img + '" alt="' + name + '" width="100" height="100"</td > ';
+                text += "<td>" + numberWithCommas(price) + " VNĐ</td>"
+                text += "<td>" + quantity + "</td>"
+                text += "<td>" + numberWithCommas(total) + " VNĐ</td>"
+
+                text += "</tr>";
+            }
+            document.getElementById("tbodyModal").innerHTML = text;
+            document.getElementById("total").innerHTML = numberWithCommas(response.total) + ' VNĐ';
+        }
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        function clearModal() {
+            document.getElementById("tbodyModal").innerHTML = '';
+            document.getElementById("total").innerHTML = '';
+        }
+
+
+    </script>
+}

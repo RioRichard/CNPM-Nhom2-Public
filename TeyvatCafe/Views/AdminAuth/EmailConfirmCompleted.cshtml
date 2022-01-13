@@ -1,0 +1,37 @@
+﻿
+@{
+    Layout = "_AuthLayout";
+    ViewBag.Title = "Xác thực tài khoản";
+}
+
+<div id="layoutError">
+    <div id="layoutError_content">
+        <main>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="text-center mt-4">
+                            <h3>Xác nhận email thành công</h3>
+                            <p>Email của bạn đã được xác thực thành công</p>
+                            <p>Nhấn vào link dưới nếu trang không tự chuyển về trang chủ sau 5 giây</p>
+
+                            <a href="/">
+                                <i class="fas fa-arrow-left mr-1"></i>
+                                Quay lại trang chủ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                window.location.href = "/";
+            }, 5000)
+        })
+    </script>
+}

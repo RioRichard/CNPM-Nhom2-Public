@@ -1,0 +1,440 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Quản Lí Nhân Viên";
+
+}
+@model List<AccountStaff>
+<div>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">QUẢN LÝ NHÂN VIÊN</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+                <li class="breadcrumb-item active">Staff</li>
+            </ol>
+
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="bg-dark" style="color:white">
+                        <tr>
+
+                            <td>UserName</td>
+                            <td>Email</td>
+                            <td>Quyền</td>
+                            <td>Chỉnh Sửa Thông Tin Nhân Viên</td>
+                            <td>Ban Nhân Viên</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            if (item.IsBanned == false)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <p><h5 class="categorye-name" style="color:black">@item.UserName</h5></p>
+                                    </td>
+                                    <td>
+                                        <p><h5 class="Category-id" style="color:black">@item.Email</h5></p>
+                                    </td>
+                                    <td>
+                                        <p>
+                                            <h5 class="Category-id" style="color:black">
+                                                @foreach (var item2 in item.ListRole)
+                                                {
+                                                    @item2.RoleName <br />
+                                                }
+                                            </h5>
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top: 0px !important">
+                                            <button class="btn btn-primary btn-editstaff" href="#" sID ="@item.IDStaff"
+                                                                                                   >SỬA</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top:0px !important">
+                                            <button class="btn btn-primary " name="btn-banstaff" sID2 ="@item.IDStaff">BAN</button >
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                        <button class="btn btn-primary btn-addstaff">Thêm Nhân Viên</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<div class="d-flex justify-content-end" style="margin-right: 145px">
+    <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/StaffManagement" ma-item="8">
+    </pagination-helper>
+</div>
+@*MODALVER2*@
+<div class="modalver2" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="closever2">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Thêm Nhân Viên
+        </header>
+        <form id="addform">
+            <div class="modal-body" style="max-height:400px">
+                <div class="modal-Staff-Username">
+                    <label for="text-tickets" class="modal-label">
+                        UserName Nhân Viên
+                    </label>
+                    <input  type="text" class="modal-input" placeholder="Enter Staff's Username" name="userName">
+                </div>
+                <div class="modal-Staff-Email">
+                    <label for="text-tickets" class="modal-label">
+                        Email
+                    </label>
+                    <input  type="text" class="modal-input" placeholder="Enter Staff's Email" name="staffEmail">
+                </div>
+                <div class="StaffRole">
+                    <label for="text-tickets" class="modal-label">
+                        Lựa Chọn Quyền Nhân Viên
+                    </label>
+                    @foreach (var item in ViewBag.RoleChange)
+                    {
+
+                        <br />
+                        <input type="checkbox" id="@item.IDRole" name="roleId" value="@item.IDRole">
+                        <label for="@item.IDRole">@item.RoleName</label>
+                    }
+
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button class="buy-tickets save">
+                    <i class="fas fa-check"></i>
+                    LƯU
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+@*MODAL*@
+<div class="modal" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="close">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Chỉnh Sửa Thông Tin Nhân Viên
+        </header>
+        <form id="editform">
+            <div class="modal-body" style="max-height:400px">
+                <div class="modal-Staff-Username">
+                    <label for="text-tickets" class="modal-label" >
+                        UserName Nhân viên
+                    </label>
+                    <input type="text" class="modal-input" placeholder="Enter Staff's Username" name="staffName" disabled>
+                </div>
+                <div class="modal-Staff-Email">
+                    <label for="text-tickets" class="modal-label">
+                        Email
+                    </label>
+                    <input type="text" class="modal-input" placeholder="Enter Staff's Email" name="staffEmail" disabled>
+                    <input type="hidden" name="userId" value="">
+
+                </div>
+                <div class="StaffRole">
+                    <label for="text-tickets" class="modal-label">
+                        Lựa Chọn Quyền Nhân Viên
+                    </label>
+                    @foreach (var item in ViewBag.RoleChange)
+                    {
+                        <br />
+                        <input type="checkbox" id="@item.RoleName" name="roleId"value="@item.IDRole">
+                        <label for="@item.RoleName">@item.RoleName</label>
+
+                    }
+                </div>
+                <br />
+                <div id="confirm" class="text-danger"></div>
+                <button class="btn btn-primary" id="confirmBtn" type="button" idStaff="" style="margin-top: 4px; margin-bottom: 4px;">Gửi lại email xác nhận</button>
+                <br />
+                <button class="btn btn-primary" id="forgotPassBtn" type="button" idStaff="" style="margin-top: 4px; margin-bottom: 4px;">Gửi email quên mật khẩu</button>
+            </div>
+            
+
+            <footer class="modal-footer">
+                <button class="buy-tickets save">
+                    <i class="fas fa-check"></i>
+                    LƯU THAY ĐỔI
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        const editBtns = document.querySelectorAll('.btn-editstaff');
+        const addBtns = document.querySelectorAll('.btn-addstaff');
+        const modal = document.querySelector('.modal');
+        const modalver2 = document.querySelector('.modalver2');
+        const modalClose = document.querySelector('.close');
+        const modalver2close = document.querySelector('.closever2');
+        jQuery.validator.addMethod("domainEmail", function (value, element) {
+            var filter = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])*(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(.)+$/.test(value);
+            return this.optional(element) || filter
+        })
+
+        jQuery.validator.addMethod("userRegEx", function (value, element) {
+            var regex = /^[a-zA-Z0-9]{1,}$/g.test(value);
+            return this.optional(element) || regex
+        })
+        $('button[id="forgotPassBtn"]').click(
+            function () {
+                var id = $(this).attr('idStaff');
+                $.post('/adminauth/ForgotPassword', { idStaff: id }, (r) => {
+                    console.log(r);
+                    if (r == true) {
+                        alert("Gửi thư lấy lại mật khẩu thành công. Hãy chờ 5 phút nếu muốn gửi lại.");
+                    } else
+                        alert("Gửi thư lấy lại mật khẩu không thành công do bạn gửi quá sớm. Hãy thử lại sau 5 phút");
+
+                })
+            }
+        )
+        $('button[id="confirmBtn"]').click(
+            function () {
+                var id = $(this).attr('idStaff');
+                $.post('/adminauth/sendConfirmMailAgain', { idStaff: id }, (r) => {
+                    console.log(r);
+                    if (r == true) {
+                        alert("Gửi lại thư xác thực thành công. Hãy chờ 5 phút nếu muốn gửi lại.");
+                    } else
+                        alert("Gửi lại thư xác thực không thành công do bạn gửi quá sớm. Hãy thử lại sau 5 phút");
+
+                })
+            }
+        )
+        function fillModal(r) {
+            var userName = r.userName;
+            var email = r.email;
+            var listRole = r.listRole;
+            var idStaff = r.idStaff;
+            $("input[name='userId']").val(idStaff);
+
+            $("input[name='staffName']").val(userName);
+            $("input[name='staffEmail']").val(email);
+            for (var i = 0; i < listRole.length; i++) {
+                var roleNames = listRole[i].roleName;
+                $("input[id='" + roleNames + "']").prop('checked', true);
+
+            }
+            $('button[id="confirmBtn"]').attr('idStaff', idStaff);
+            if (r.isConfirmed == true) {
+                $('button[id="confirmBtn"]').prop('disabled', true);
+                $('#confirm').append("Tài khoản đã xác nhận!")
+            }
+            else {
+                $('button[id="confirmBtn"]').prop('disabled', false);
+                $('#confirm').append("Tài khoản chưa xác nhận!")
+
+            }
+            $('button[id="forgotPassBtn"]').attr('idStaff',idStaff);
+
+
+        }
+        function clearModal() {
+            $("input[name='staffName']").val("");
+            $("input[name='staffEmail']").val("");
+            $('#confirm').empty();
+            
+
+        }
+
+        function showEdit() {
+            
+            var sID = $(this).attr("sID");
+            //$("input[name='staffName']").val(sUsername);
+            //$("input[name='staffEmail']").val(sEmail);
+            //$("input[name='sFullname']").val(sFullname);
+            //$("input[name='sID']").val(sID);
+            $.get('/adminauth/GetStaffInID', { idStaff: sID }, (r) => {
+                fillModal(r);
+                console.log(r);
+            })
+            modal.classList.add('open')
+            $('#editform').validate({
+                rules: {
+                    staffName: {
+                        required: true,
+                        userRegEx: true,
+                        minlength: 2,
+                        maxlength: 256,
+                    },
+                    staffEmail: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 256,
+                        domainEmail: true,
+
+                        email: true,
+                    },
+                },
+                messages : {
+                    staffName: {
+                        required: "Vui lòng nhập tên nhân viên",
+                        userRegEx:"Vui lòng nhập username bắt đầu bằng chữ hoặc số, không có kí tự đặc biệt và khoảng trắng.",
+                        minlength: "Ít nhất nhập 2 kí tự",
+                        maxlength: "Nhập nhiều nhất 256 kí tự",
+                    },
+
+                    staffEmail: {
+                        required: "Vui lòng nhập Email",
+                        minlength: "Ít nhất nhập 10 kí tự ",
+                        maxlength: "Nhập nhiều nhất 256 kí tự",
+                        domainEmail: "Vui lòng nhập đúng định dạng",
+
+                        email: "Vui lòng nhập đúng định dạng",
+                    },
+                },
+                submitHandler: function (form) {
+                    console.log($(form).serialize());
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/ChangeRole",
+                        data: $(form).serialize(),
+                        dataType: "json",
+
+                        success: function (response) {
+                            if (response == false) {
+                                alert("Lỗi! Chỉnh sửa thông tin nhân viên không thành công");
+                            }
+                            else {
+                                alert("Chỉnh sửa thông tin nhân viên thành công.");
+                                window.location.href = window.location.href;
+                            }
+
+
+                        },
+                        error: function (err) {
+                            alert(err);
+                            console.log(err);
+                        }
+                    });
+                }
+            })
+
+        }
+
+
+        function closeEdit() {
+            modal.classList.remove('open')
+            clearModal();
+        }
+        function showAdd() {
+            modalver2.classList.add('open')
+            $('#addform').validate({
+                rules: {
+                    userName: {
+                        required: true,
+                        userRegEx: true,
+                        minlength: 6,
+                        maxlength: 32,
+                    },
+                    staffEmail: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 64,
+                        domainEmail: true,
+
+                        email: true,
+                    },
+                },
+                messages: {
+                    userName: {
+                        required: "Vui lòng nhập tên nhân viên",
+                        userRegEx: "Vui lòng nhập username bắt đầu bằng chữ hoặc số, không có kí tự đặc biệt và khoảng trắng.",
+
+                        minlength: "Ít nhất nhập 6 kí tự",
+                        maxlength: "Nhập nhiều nhất 32 kí tự",
+                    },
+
+                    staffEmail: {
+                        required: "Vui lòng nhập Email",
+                        minlength: "Ít nhất nhập 10 kí tự ",
+                        maxlength: "Nhập nhiều nhất 64 kí tự",
+                        domainEmail: "Vui lòng nhập đúng định dạng",
+
+                        email: "Vui lòng nhập đúng định dạng",
+
+                    },
+                },
+                submitHandler: function (form) {
+                    $.post('/adminAuth/AddStaff', $(form).serialize(), (r) => {
+                        if (r == 1) {
+                            alert('Them nhan vien thanh cong');
+                            window.location.href = window.location.href
+                        }
+                        else if (r == 1) { }
+                        switch (r) {
+                            case 1:
+                                alert('Them nhan vien thanh cong');
+                                window.location.href = window.location.href
+                                break;
+                            case -1:
+                                alert('Them nhan vien khong thanh cong. Trung UserName hoac Email');
+                                break;
+                            default:
+                                alert('Them nhan vien khong thanh cong.');
+                                break;
+                        }
+                            
+
+                    });
+                }
+            })
+         }
+        function closeAdd() {
+            modalver2.classList.remove('open')
+        }
+        modalver2close.addEventListener('click', closeAdd)
+        for (const editBtn of editBtns) {
+            editBtn.addEventListener('click', showEdit)
+        }
+        for (const addBtn of addBtns) {
+            addBtn.addEventListener('click', showAdd)
+        }
+        modalClose.addEventListener('click', closeEdit)
+        
+
+        $("button[name='btn-banstaff']").click(function () {
+            var sID2 = $(this).attr("sID2");
+            $.ajax({
+                type: "POST",
+                url: "/admin/BannedTrashStaff",
+                data: { sID2: sID2 },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response == false) {
+                        alert("Ban Staff không thành công. Có thể do bạn đang cố ban SuperAdmin.");
+                    }
+                    else {
+                        alert("Ban Staff thành công.");
+                        window.location.href = window.location.href;
+                    }
+                }
+            });
+        })
+    </script>
+    }

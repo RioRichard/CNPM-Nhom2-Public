@@ -1,0 +1,65 @@
+﻿@model Product
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+}
+<div class="container" style="padding: 20px ">
+    <div class="row g-0 bg-light position-relative">
+        <div class="col-md-6 mb-md-0 p-md-4">
+            <img src="/img/productImg/@Model.ImageUrl" alt="@Model.Name" />
+        </div>
+        <div class="vr"></div>
+        <div class="col-md-6 p-4 ps-md-0">
+            <br /><br />
+            <h3 style="color: red"> <strong> @Model.Name</strong> </h3>
+            <p></p>
+            @if (Model.Stock > 0)
+            {
+                <p class="text-danger">Còn hàng</p>
+            }
+            else
+            {
+                <p class="text-danger">Hết hàng</p>
+
+            }
+
+            <p>Price: @Model.Price.ToString("#,##0") VNĐ</p>
+            <strong>
+                SKU: @Model.SKU
+            </strong>
+            <form action="/cart/AddItemToCart" method="post">
+                <input type="hidden" name="idProduct" value="@Model.IdProduct" />
+                <label for="quantity"> Nhập số lượng:</label>
+                <br />
+                <input type=number min="1" max="@Model.Stock" name="quantity" id="quantity" value="0" />
+                <br />
+                <br />
+                <button class="btn btn-danger" style="">Thêm vào giỏ hàng</button>
+            </form>
+            <div class="text-danger">@TempData["messageAddItem"]</div>
+            <br />
+
+            <strong style="color: red">
+                Chi tiết Sản Phẩm:
+            </strong>
+            <p>
+                @Html.Raw(@Model.Description)
+            </p>
+        </div>
+    </div>
+    <div style="margin: 40px" class="fw-bold">
+        <strong style="color: red">Thông tin sản phẩm</strong>
+        @foreach (var item in ViewBag.PA)
+        {
+            <br />
+            <strong>@item.AttributeName : </strong>
+            @item.Value
+        }
+    </div>
+
+</div>
+
+
+
+
+
+

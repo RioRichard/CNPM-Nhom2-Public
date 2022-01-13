@@ -1,0 +1,261 @@
+﻿@model IEnumerable<ProductCart>
+
+@{
+    Layout = "_LayoutAccount";
+    ViewBag.Title = "Giỏ hàng của bạn";
+}
+<main>
+    <div class="container-fluid">
+        @if (Model.Count() == 0)
+        {
+            <input type="hidden" name="checkNull" value="0" />
+        }
+        else
+        {
+            <input type="hidden" name="checkNull" value="1" />
+
+        }
+        <h1 class="mt-4">GIỎ HÀNG CỦA BẠN</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/account">Tài khoản</a></li>
+            <li class="breadcrumb-item active">Giỏ hàng của bạn</li>
+        </ol>
+        <table class="table table-bordered">
+            <thead class="bg-dark text-light">
+                <tr>
+                    <td>Tên sản phẩm</td>
+                    <td>Hình ảnh</td>
+                    <td>Giá tiền</td>
+                    <td>Sô lượng</td>
+                    <td>Tổng số tiền</td>
+                    <td>Tình trạng sản phẩm</td>
+
+                    <td>Xoá sản phẩm</td>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="product_tr">
+                        <td>@item.ProductName</td>
+                        <td><img src="/img/productImg/@item.UrlImage" alt="@item.ProductName" width="150" height="150" /></td>
+                        <td>
+                            @item.PaymentPrice.ToString("#,##0") VNĐ
+                            <div style="display:none" class="unitprice" val="@item.PaymentPrice"></div>
+                        </td>
+
+
+                        <td><input type="number" class="quantity" name="quantity" value="@item.Quantity" cid="@item.IdCart" pid="@item.IdProduct" min="0" required /></td>
+                        <td><div class="totalItem"></div></td>
+                        <td>
+                            @if (item.Stock <= 0)
+                            {
+                                <p class="text-danger">Hết hàng</p>
+                            }
+                            else
+                            {
+                                <p class="text-primary">Còn hàng</p>
+
+                            }
+
+                        </td>
+                        <td><button name="delete" class="btn btn-outline-danger" cid="@item.IdCart" pid="@item.IdProduct"><i class="fas fa-trash"></i></button></td>
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+            <p>Tổng cộng: <b class="total"></b></p>
+        </div>
+        <div class="d-flex justify-content-end" style="margin-bottom:10px;margin-top:10px">
+            <button class="btn btn-primary btn-edit" type="button">Chỉnh địa chỉ.</button>
+        </div>
+        <div class="d-flex justify-content-end">
+            <input type="hidden" name="addressCount" value="@ViewBag.AddressCount" />
+
+
+
+            <a href="/" class="btn btn-outline-primary">Tiếp tục mua sắm</a>
+
+            <button name="charge" type="button" class="btn btn-danger" style="margin-left:20px">Thanh toán!</button>
+        </div>
+
+    </div>
+</main>
+<div class="modal" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="close">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Thêm địa chỉ
+        </header>
+        
+        <div class="modal-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="table-header" style="background-color:lavender">
+                        <td class="col-4">Địa chỉ</td>
+                        <td class="col-3">Số điện thoại</td>
+                        <td>Người nhận</td>
+                        <td>Địa chỉ được chọn</td>
+                        
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.Address != null)
+                    {
+                        @foreach (var item in ViewBag.Address)
+                        {
+
+                            <tr class="table-body">
+                                <td>@item.Adresss</td>
+                                <td>@item.PhoneNumber</td>
+                                <td>@item.Receiver</td>
+                                <td>
+                                    @if (item.IsDefault == true)
+                                    {
+                                        <input name="IsDefault" checked type="radio" value="true" addId="@item.IdAddress" />
+                                    }
+                                    else
+                                    {
+                                        <input name="IsDefault" type="radio" value="true" addId="@item.IdAddress" />
+
+                                    }
+
+                                </td>
+
+
+
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        
+
+
+
+    </div>
+</div>
+@section Scripts{ 
+    <script>
+        const editBtns = document.querySelectorAll('.btn-edit');
+        const modal = document.querySelector('.modal');
+        const modalClose = document.querySelector('.close');
+        function showEdit() {
+            modal.classList.add('open');
+        }
+        function closeEdit() {
+            modal.classList.remove('open')
+        }
+        for (const editBtn of editBtns) {
+            editBtn.addEventListener('click', showEdit)
+        }
+        modalClose.addEventListener('click', closeEdit)
+        const delBtns = document.querySelectorAll('.btn-del');
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        $(document).ready(function () {
+            calculate();
+        });
+        function calculate() {
+            var total = 0;
+            $('.product_tr').each(function () {
+                var quantity = parseInt($(this).find('.quantity').val());
+                var unitprice = ($(this).find('.unitprice').attr("val"));
+
+                rowtotal = (quantity * unitprice)
+                
+                $(this).find('.totalItem').text(numberWithCommas(rowtotal) + ' VNĐ');
+                total += rowtotal;
+            })
+            $('.total').text(numberWithCommas(total) + ' VNĐ');
+        }
+        $('input[name="quantity"]').change(function () {
+            var qty = $(this).val();
+            var cid = $(this).attr('cid');
+            var pid = $(this).attr('pid');
+            $.post('/cart/changeQuantityCart', { Quantity: qty, ProductId: pid, CartID: cid }, (r) => {
+                
+                calculate();
+                if (qty == 0) {
+                    alert("Sản phẩm này sẽ bị xoá khỏi giỏ hàng")
+                    window.location.href = window.location.href;
+                }
+                    
+            });
+        });
+        $('button[name="delete"]').click(function () {
+            event.preventDefault;
+            event.stopPropagation;
+            var cid = $(this).attr('cid');
+            var pid = $(this).attr('pid');
+
+            $.post('/cart/deleteProductCart', {  ProductId: pid, CartID: cid }, (r) => {
+                console.log(r);
+                window.location.href = window.location.href;
+            });
+        });
+        $('button[name="charge"]').click(function () {
+            var checkNull = $('input[name="checkNull"]').val();
+            var checkAddress = $('input[name="addressCount"]').val();
+            
+            if (checkNull == 0) {
+                alert('Giỏ hàng trống. Hãy mua thêm trước khi thanh toán.');
+            }
+            else if (checkAddress == 0) {
+                var result = confirm('Hiện bạn không có địa chỉ. Vui lòng thêm địa chỉ trước khi thanh toán. Bạn có muốn sang trang địa chỉ?');
+                if (result == true) {
+                    window.location.href = "/account/address";
+
+                }
+                
+
+
+            }
+            else {
+                var idAddress = $('input[name="IsDefault"]:checked').attr('addId');
+                
+                $.ajax({
+                    type: "post",
+                    datatype: "json",
+                    url: "/cart/chargecart",
+                    data: { IdAddress: idAddress },
+                    success: function (response) {
+                        if (response == true) {
+                            alert("giỏ hàng của bạn đã được thanh toán. bạn sẽ được chuyển qua trang đơn hàng của bạn.");
+                            window.location.href = "/account/invoice";
+                        }
+                        else {
+                            alert("đơn hàng của bạn chưa được thanh toán. xin hãy kiểm tra lại giỏ hàng của bạn.");
+
+                            window.location.href = window.location.href;
+
+                        }
+
+
+                    }
+                })
+            }
+            
+
+
+            
+           
+            
+            
+        });
+    </script>
+
+}

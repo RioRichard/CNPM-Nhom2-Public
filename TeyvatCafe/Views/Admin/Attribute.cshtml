@@ -1,0 +1,280 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Thuộc Tính";
+}
+
+
+@model List<TeyvatCafe.Models.Attribute>
+<div>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">THUỘC TÍNH</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+                <li class="breadcrumb-item active">THUỘC TÍNH</li>
+            </ol>
+
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="bg-dark" style="color:white">
+                        <tr>
+
+                            <td>Tên Thuộc Tính</td>
+                            <td>Sửa Thuộc Tính</td>
+                            <td>Xóa Thuộc Tính</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+
+                            <tr>
+
+                                <td>
+                                    <p><h5 class="Attribute-id" style="color:black">@item.AttributeName</h5></p>
+                                </td>
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top:0px !important">
+                                        <button class="btn btn-primary btn-editattribute" href="#" attrName="@item.AttributeName"
+                                                attrID="@item.IdAttribute"
+                                                isdel="@item.IsDelete">
+                                            SỬA
+                                        </button>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top:0px !important">
+                                        <button class="btn btn-primary" attrID2="@item.IdAttribute" name="delete">XÓA</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                        <button class="btn btn-primary btn-addattribute" href="#">Thêm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="d-flex justify-content-end" style="margin-right: 145px">
+        <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/attribute" ma-item="1">
+        </pagination-helper>
+    </div>
+</div>
+@*MODALVER2*@
+<div class="modalver2" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="closever2">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Thêm Thuộc Tính
+        </header>
+        <form id="addform">
+            <div class="modal-body" style="max-height:150px">
+
+                <div class="modal-attribute-name">
+                    <label for="text-tickets" class="modal-label">
+                        Tên Thuộc Tính
+                    </label>
+                    <input id="text-tickets" type="text" class="modal-input" placeholder="Enter Attribute's Name" name="attributeName2">
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button class="buy-tickets save">
+                    <i class="fas fa-check"></i>
+                    LƯU
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+@*MODAL*@
+<div class="modal" style="position:fixed;top:0;bottom:0;right:0;left:0">
+    <div class="modal-container">
+        <div class="close">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <header class="modal-header">
+            <i class="far fa-edit"></i>
+            Sửa Đổi Thuộc Tính
+        </header>
+        <form id="editform">
+            <div class="modal-body" style="max-height:150px">
+
+                <div class="modal-attribute-name">
+                    <label for="text-tickets" class="modal-label">
+                        Tên Thuộc Tính
+                    </label>
+                    <input id="text-tickets" type="text" class="modal-input" placeholder="Enter Attribute's Name" name="attributeName">
+                    <input type="hidden" name="attrId" />
+                </div>
+
+
+            </div>
+
+            <footer class="modal-footer">
+                <button class="buy-tickets save" type="submit">
+                    <i class="fas fa-check"></i>
+                    LƯU THAY ĐỔI
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        const editBtns = document.querySelectorAll('.btn-editattribute');
+        const addBtns = document.querySelectorAll('.btn-addattribute');
+        const modal = document.querySelector('.modal');
+        const modalver2 = document.querySelector('.modalver2');
+        const modalClose = document.querySelector('.close');
+        const modalver2close = document.querySelector('.closever2');
+
+
+
+        function showEdit() {
+            var attrID = $(this).attr("attrID");
+            var attrName = $(this).attr("attrName");
+            $("input[name='attributeName']").val(attrName);
+            $("input[name='attrId']").val(attrID);
+            modal.classList.add('open')
+            $('#editform').validate({
+                rules: {
+                    attributeName: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 256,
+                    },
+                },
+                messages: {
+                    attributeName: {
+                        required: "Vui lòng nhập tên thuộc tính",
+                        minlength: "Ít nhất nhập 2 kí tự",
+                        maxlength: "Nhập nhiều nhất 256 kí tự",
+                    },
+
+                },
+                submitHandler: function (form) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/editattribute",
+                        data: $(form).serialize(),
+                        dataType: "json",
+
+                        success: function (response) {
+                            if (response == false) {
+                                alert("Sửa thuộc tính không thành công");
+                            }
+                            else {
+                                alert("Sửa thuộc tính thành công.");
+                                window.location.href = window.location.href;
+                            }
+
+
+                        }
+                    });
+                }
+            })
+
+        }
+
+        function closeEdit() {
+            modal.classList.remove('open')
+        }
+        function showAdd() {
+            modalver2.classList.add('open');
+            var attrID = $(this).attr("attrID");
+            var attrName = $(this).attr("attrName");
+            $("input[name='attributeName2']").val(attrName);
+            $("input[name='attrId']").val(attrID);
+            $('#addform').validate({
+                rules: {
+                    attributeName2: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 256,
+                    },
+                },
+                messages: {
+                    attributeName2: {
+                        required: "Vui lòng nhập tên thuộc tính",
+                        minlength: "Ít nhất nhập 2 kí tự",
+                        maxlength: "Nhập nhiều nhất 256 kí tự",
+                    },
+
+                },
+                submitHandler: function (form) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/AddAtribute",
+                        data: $(form).serialize(),
+                        dataType: "json",
+
+                        success: function (response) {
+                            if (response == false) {
+                                alert("Thêm thuộc tính không thành công");
+                            }
+                            else {
+                                alert("Thêm thuộc tính thành công.");
+                                window.location.href = window.location.href;
+                            }
+                        }
+                    });
+                }
+            })
+        }
+        function closeAdd() {
+            modalver2.classList.remove('open')
+        }
+        modalver2close.addEventListener('click', closeAdd)
+        for (const editBtn of editBtns) {
+            editBtn.addEventListener('click', showEdit)
+        }
+        for (const addBtn of addBtns) {
+            addBtn.addEventListener('click', showAdd)
+        }
+        modalClose.addEventListener('click', closeEdit)
+
+
+        //const add = document.querySelector('.save')
+        //saves.addEventListener('click', saveAlert)
+        //function saveAlert() {
+        //    alert('Xác nhận lưu?')
+        //}
+        $("button[name='delete']").click(function () {
+            var attrID2 = $(this).attr("attrID2");
+            $.ajax({
+                type: "POST",
+                url: "/admin/deleteattribute",
+                data: { attrID2: attrID2 },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response == false) {
+                        alert("Xóa danh mục không thành công");
+                    }
+                    else {
+                        alert("Xóa danh mục thành công.");
+                        window.location.href = window.location.href;
+
+                    }
+                }
+            });
+        })
+    </script>
+}
+

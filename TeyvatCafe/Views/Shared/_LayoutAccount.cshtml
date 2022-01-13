@@ -1,0 +1,237 @@
+﻿@inject IConfiguration Configuration
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/styles.css">
+
+    <link rel="stylesheet" href="~/css/style.css">
+
+    <style>
+        .modal, .modalver2 {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+            .modal .modal-container {
+                background-color: white;
+                width: 60%;
+                max-width: calc(100%-32px);
+                min-height: 200px;
+                position: relative;
+                overflow-y: initial !important;
+            }
+
+        .modal-header {
+            background-color: #009688;
+            height: 130px;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            line-height: 65px;
+            color: white;
+        }
+
+        .ti-bag {
+            margin: 12px;
+        }
+
+        .close, .closever2 {
+            position: absolute;
+            right: 0;
+            top: 0;
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+        }
+
+            .close:hover {
+                color: black;
+                background-color: #ccc;
+            }
+
+        .modal-body {
+            padding: 15px;
+            height: 80vh;
+            overflow-y: auto;
+            max-height: 600px
+        }
+
+        .modal-label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .modal-input {
+            padding: 8px;
+            width: 100%;
+            font-size: 15px;
+        }
+
+        .buy-tickets {
+            width: 100%;
+            padding: 16px;
+            background-color: #009688;
+            margin: 16px 0;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+            .buy-tickets:hover {
+                opacity: 0.8;
+            }
+
+        .modal-footer {
+            text-align: right;
+            padding: 16px;
+            border: none;
+        }
+
+            .modal-footer a {
+                color: #2196f3;
+            }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal.close {
+            display: none;
+        }
+
+        .modalver2.open {
+            display: flex;
+        }
+
+        .modalver2.close {
+            display: none;
+        }
+
+        #footer {
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="bg-dark">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-2">
+                        <a href="/">
+                            <img src="~/img/icon/@Configuration["ImageUrlLogo"]" style="height: 200px" alt="Logo" />
+
+                        </a>
+                    </div>
+                    <div class="col-10">
+                        <img src="~/img/icon/@Configuration["ImageUrlBanner"]" style="max-height:200px;min-width:1500px" alt="Banner" />
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </header>
+        <nav class="navbar navbar-expand-lg navbar-light " style="background-color:gainsboro !important;">
+            <a class="navbar-brand" href="/"><i class="fas fa-home"></i></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+        </nav>
+        <div>
+            <div class="row" style="min-height:100vh">
+                <div class="col-2">
+                    <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                        <div class="sb-sidenav-menu">
+                            <div class="nav">
+                                <div class="sb-sidenav-menu-heading">Thông tin chung</div>
+                                <a class="nav-link" href="/account">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                    Thông tin tài khoản
+                                </a>
+                                <a class="nav-link" href="/account/address">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                    Địa chỉ
+                                </a>
+                                <a class="nav-link" href="/account/ChangePassword">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                    Đổi mật khẩu
+                                </a>
+                                <a class="nav-link" href="/account/cart">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                    Giỏ hàng của bạn
+                                </a>
+                                <a class="nav-link" href="/account/invoice">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                    Đơn hàng của bạn
+                                </a>
+                                <a class="nav-link" href="/auth/logout">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                    Đăng xuất
+                                </a>
+
+                                <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="layout-static.html">Static Navigation</a>
+                                        <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <div class="col-10">
+                    @RenderBody()
+                </div>
+
+
+            </div>
+        </div>
+        <footer class="bg-dark text-light text-center" style="margin-top:10px;">
+            <div class="row">
+
+                <div class="col-4">
+                    <h1>Website kinh doanh cafe Teyvat</h1>
+                </div>
+                <div class="col-4">
+                    <h3>Các thành viên của nhóm</h3>
+                    <ul class="Member-name" style="list-style-type:none">
+                        <li>Phùng Ngọc Thành</li>
+                        <li>Lê Phạm Quốc Thái</li>
+                        <li>Trương Thiên Bảo</li>
+                        <li>Nguyễn Mạnh Cường</li>
+                    </ul>
+                </div>
+                <div class="col-4">
+                    <h1>Đồ án môn <br />Công nghệ phần mềm</h1>
+
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

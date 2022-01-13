@@ -1,0 +1,39 @@
+﻿
+@{
+    Layout = "_AuthLayout";
+    ViewBag.Title = "Lỗi xác thực tài khoản";
+}
+
+<div id="layoutError">
+    <div id="layoutError_content">
+        <main>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="text-center mt-5">
+                            <h4 class="text-danger">Gửi lại đường dẫn xác thực</h4>
+                            <p>Tài khoản của bạn chưa được xác thực hoặc đường dẫn xác thực đã hết hạn.</p>
+                            <p>Vui lòng liên hệ quản trị viên để có thể gửi lại đường dẫn</p>
+
+                            <p>Nhấn vào link dưới nếu trang không tự chuyển về trang chủ sau 5 giây</p>
+
+                            <a href="/">
+                                <i class="fas fa-arrow-left mr-1"></i>
+                                Quay lại trang chủ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                window.location.href = "/";
+            }, 5000)
+        })
+    </script>
+}

@@ -1,0 +1,62 @@
+#logo-site .logo-img
+{
+    width: 15%;
+}
+/*#nav-side
+{
+  width: 100%;
+  position: fixed;
+}*/
+.banner-img
+{
+    width: 85%;
+    height: 300px;
+    float: right;
+    position: fixed;
+    right: 0;
+}
+#footer
+{
+    background-color: black;
+    /*position: fixed;*/
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding: 20px;
+    display: inline-block;
+}
+#footer h3{
+    color: white;
+    display: inline-block;
+    font-weight: bold;
+}
+#footer ul
+{
+    color: white;
+    display: contents;
+    list-style-type: none;
+}
+.member
+{
+    width: 33%;
+    text-align: center;
+    font-size: large;
+    font-family: Arial, Helvetica, sans-serif;
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    font-size: 18pt;
+}
+.project-name
+{
+    width: 33%;
+    text-align: center;
+    font-size: large;
+    font-family: Arial, Helvetica, sans-serif;
+    display: inline-block;
+    position: relative;
+    color: white;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+

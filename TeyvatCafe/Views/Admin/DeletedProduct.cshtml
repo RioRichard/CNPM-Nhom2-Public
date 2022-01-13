@@ -1,0 +1,90 @@
+﻿@model List<Product>;
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Sản Phẩm Đã Xóa";
+}
+
+<div>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">SẢN PHẨM ĐÃ XÓA</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+
+                <li class="breadcrumb-item active">SẢN PHẨM ĐÃ XÓA</li>
+            </ol>
+
+            <div class="card-body">
+                <table class="table table-bordered" style="vertical-align:baseline">
+                    <thead class="bg-dark" style="color:white">
+                        <tr style="text-align:center">
+
+                            <td>Tên Sản Phẩm</td>
+                            <td>Giá</td>
+                            <td>Số Lượng</td>
+                            <td>Hình Ảnh</td>
+                            @*<td>Description</td>*@
+                            <td>Khôi Phục Sản Phẩm</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr style="text-align:center">
+
+                                <td>
+                                    <p><h5 style="color:black;max-width:400px">@item.Name</h5></p>
+                                </td>
+                                <td>
+                                    <p><h5 style="color:black">@item.Price VND</h5></p>
+                                </td>
+                                <td>
+                                    <p><h5 style="color:black">@item.Stock</h5></p>
+                                </td>
+                                <td>
+                                    <p><h5 style="color:black"> <img src="/img/productImg/@item.ImageUrl" width="150" height="150" />  </h5></p>
+                                </td>
+
+                                <td>
+                                    <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0" style="margin-top:0px !important">
+                                        <button class="btn btn-primary btn-edit" pID="@item.IdProduct" name="restore">Khôi Phục</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <div class="d-flex justify-content-end" style="margin-right: 145px">
+        <pagination-helper current-page="@ViewBag.Currentpage" total-page="@ViewBag.Totalpage" url-page="/admin/deletedproduct" ma-item="6">
+        </pagination-helper>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $("button[name='restore']").click(function () {
+            var pID = $(this).attr("pID");
+            $.ajax({
+                type: "POST",
+                url: "/admin/restoreproduct",
+                data: { pID: pID },
+                dataType: "json",
+
+                success: function (response) {
+                    if (response == false) {
+                        alert("Khôi phục sản phẩm không thành công");
+                    }
+                    else {
+                        alert("Khôi phục sản phẩm thành công.");
+                        window.location.href = window.location.href;
+                    }
+                }
+            });
+        })
+    </script>
+}

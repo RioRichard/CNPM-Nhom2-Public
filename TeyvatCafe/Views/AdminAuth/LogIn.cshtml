@@ -1,0 +1,108 @@
+@model AuthModel
+
+@{
+    Layout = "_AuthLayout";
+    ViewBag.Title = "Đăng nhập.";
+}
+
+
+﻿<div style="background-image: url(/img/icon/LoginBackground.jpg); background-size:cover" id="layoutAuthentication">
+     <div class="container">
+         <div class="row justify-content-center ">
+             <div class="col-lg-5">
+                 <div class="card shadow-lg border-0 rounded-lg mt-5">
+                     <div class="card-header"><h3 style="font-size:40px;" class="text-center font-weight-light my-4" id="dangnhap"><b>ĐĂNG NHẬP</b></h3></div>
+                     <div class="card-body">
+                         <form  id="logForm">
+                             <div class="form-group">
+                                 <label class="small mb-1" for="user"><b>Username</b></label>
+                                 <input class="form-control py-4" id="user" type="text" name="UserName" placeholder="Nhập username" asp-for="UserName" />
+                             </div>
+                             <div class="form-group">
+                                 <label class="small mb-1" for="password"><b>Mật Khẩu</b></label>
+                                 <input class="form-control py-4" id="password" type="password" name="Pass" placeholder="Nhập Mật Khẩu" asp-for="Pass" />
+                             </div>
+
+                             <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                                 <button class="btn btn-primary" type="submit">Đăng nhập</button>
+                             </div>
+                         </form>
+
+
+                     </div>
+
+                 </div>
+             </div>
+         </div>
+     </div>
+</div>
+@section Scripts{
+    <script>
+
+        jQuery.validator.addMethod("userRegEx", function (value, element) {
+            var regex = /^[a-zA-Z0-9]{1,}$/g.test(value);
+            return this.optional(element) || regex
+        })
+        $().ready(function () {
+
+            $("#logForm").validate({
+
+                rules: {
+                    UserName: {
+                        required: true,
+                        userRegEx: true,
+                        maxlength: 32,
+                        minlength: 6
+                    },
+                    Pass: {
+                        required: true,
+                        minlength: 6,
+                        maxlength: 24,
+
+                    },
+                },
+                messages: {
+                    UserName: {
+                        required: "Bắt buộc nhập username",
+                        userRegEx: "Bắt đầu bằng chữ hoặc số và không có kí tự đặc biệt",
+                        maxlength: "Hãy nhập tối đa 32 ký tự",
+                        minlength: "Hãy nhập tối thiểu 6 ký tự"
+
+                    },
+                    Pass: {
+                        required: "Bắt buộc nhập password",
+                        minlength: "Hãy nhập ít nhất 6 ký tự",
+                        maxlength: "Hãy nhập ít nhất 24 ký tự",
+
+                    },
+
+                },
+                submitHandler: function (form) {
+                    $.post('/adminauth/login', $(form).serialize(), (r) => {
+                        switch (r) {
+                            case true:
+                                alert('Tài khoản của bạn chưa được kích hoạt. Đã gửi lại đường dẫn xác thực tài khoản vào email bạn.');
+                                
+                                break;
+                            case false:
+                                alert('Tài khoản của bạn chưa được kích hoạt. Email xác thực vừa mới được gửi, vui lòng chờ 5 phút để gửi lại');
+
+                                break;
+                            case 1:
+                                alert('Đăng nhập thành công. Bạn sẽ được chuyển về trang admin.');
+                                window.location.href = "/admin";
+                                break;
+                            case -1:
+                                alert('Đăng nhập không thành công. Sai tên đăng nhập hoặc mật khẩu.');
+                                break;
+                            default:
+                                alert('Đăng nhập không thành công. Bạn đã bị banned. Hãy liên hệ admin để biết thêm chi tiết.');
+                                break;
+                        }
+                    })
+                }
+
+            });
+        });
+    </script>
+}

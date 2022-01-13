@@ -1,0 +1,132 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Biểu đồ doanh thu";
+
+}
+
+<div class="container-fluid">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4" style="text-transform:uppercase;">Biểu đồ doanh thu</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin">Trang quản lí</a></li>
+                <li class="breadcrumb-item active">Biểu đồ doanh thu</li>
+            </ol>
+
+            <div class="row">
+                <div class="col">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-area mr-1"></i>
+                            Top người mua nhiều nhất
+                        </div>
+                        <div class="card-body"><canvas id="firstChart" width="100" height="30"></canvas></div>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie mr-1"></i>
+                            Top sản phẩm được mua nhiều nhất (đơn vị tính: %)
+                        </div>
+                        <div class="card-body"><canvas id="senconChart" width="100" height="30"></canvas></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </main>
+
+</div>
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $.get('/admin/dashboardbar', (d) => {
+            var dat = new Array(d.length), lab = new Array(d.length);
+            for (var i in d) {
+                dat[i] = d[i].totalBought
+                lab[i] = d[i].userName
+                
+            }
+            
+
+            const data = {
+                labels: lab,
+                datasets: [{
+                    label: "Top người mua nhiều nhất",
+                    backgroundColor: ['rgb(255, 99, 255)', 'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)', 'green'],
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: dat,
+                    fill: false,
+                    tension: 0.1
+                }]
+            };
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {}
+            };
+
+            var myAreaChart = new Chart(
+                document.getElementById('firstChart'),
+                config
+            );
+        });
+        $.post('/admin/dashboardpie', (d) => {
+            var lenghtResult = d.results.length
+            var anotherProduct = 0;
+            
+            var dat = new Array(lenghtResult + anotherProduct), lab = new Array(lenghtResult + anotherProduct);
+            var sumTop5 = 0;
+            for (var i in d.results) {
+                dat[i] = (d.results[i].total / d.totals) * 100;
+                lab[i] = d.results[i]['name']
+                sumTop5 += d.results[i].total;
+                
+            }
+            if (lenghtResult > 5) {
+                
+                dat[lenghtResult - 1] = (1 - ((sumTop5 - d.results[lenghtResult - 1].total)  / d.totals)) * 100;
+                lab[lenghtResult-1] = "Các sản phẩm còn lại";
+            }
+            
+            
+            
+
+            const data = {
+                labels: lab,
+                datasets: [{
+                    label: 'Top product buy',
+                    backgroundColor: ['rgb(255, 99, 255)', 'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)', 'green','black'],
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: dat,
+                    fill: false,
+                    tension: 0.1
+                }]
+            };
+            const config = {
+                type: 'pie',
+                data: data,
+                options: {}
+            };
+
+            var myAreaChart = new Chart(
+                document.getElementById('senconChart'),
+                config
+            );
+        });
+        
+        
+        
+    </script>
+
+}
